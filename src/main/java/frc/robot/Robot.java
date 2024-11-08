@@ -22,11 +22,11 @@ public class Robot extends TimedRobot {
 
   CANSparkMax leftLeader;
   VictorSPX frontLeftFollower;
-  VictorSPX rearLeftFollower;
+  VictorSPX backLeftFollower;
 
   CANSparkMax rightLeader;
   VictorSPX frontRightFollower;
-  VictorSPX rearRightFollower;
+  VictorSPX backRightFollower;
 
   XboxController controller;
 
@@ -34,15 +34,15 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     leftLeader = new CANSparkMax(1, MotorType.kBrushed);
     frontLeftFollower = new VictorSPX(2);
-    rearLeftFollower = new VictorSPX(3);
+    backLeftFollower = new VictorSPX(3);
 
-    rearLeftFollower.follow(frontLeftFollower);
+    backLeftFollower.follow(frontLeftFollower);
 
     rightLeader = new CANSparkMax(4, MotorType.kBrushed);
     frontRightFollower = new VictorSPX(5);
-    rearRightFollower = new VictorSPX(6);
+    backRightFollower = new VictorSPX(6);
 
-    rearRightFollower.follow(frontRightFollower);
+    backRightFollower.follow(frontRightFollower);
 
     controller = new XboxController(0);
   }
@@ -61,11 +61,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    leftLeader.set(controller.getLeftY());
-    frontLeftFollower.set(ControlMode.PercentOutput, leftLeader.getAppliedOutput());
+    leftLeader.set(-controller.getLeftY());
+    frontLeftFollower.set(ControlMode.PercentOutput, -leftLeader.getAppliedOutput());
 
-    rightLeader.set(controller.getRightY());
-    frontRightFollower.set(ControlMode.PercentOutput, leftLeader.getAppliedOutput());
+    rightLeader.set(-controller.getRightY());
+    frontRightFollower.set(ControlMode.PercentOutput, rightLeader.getAppliedOutput());
   }
 
   @Override
