@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,18 +21,30 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 public class Robot extends TimedRobot {
 
   CANSparkMax leftLeader;
-  PWMVictorSPX frontLeftFollower;
-  PWMVictorSPX backLeftFollower;
+  VictorSPX frontLeftFollower;
+  VictorSPX backLeftFollower;
 
   CANSparkMax rightLeader;
-  PWMVictorSPX frontRightFollower;
-  PWMVictorSPX backRightFollower;
+  VictorSPX frontRightFollower;
+  VictorSPX backRightFollower;
 
-  public XboxController controller;
+  XboxController controller;
 
   @Override
   public void robotInit() {
-    
+    leftLeader = new CANSparkMax(1, MotorType.kBrushed);
+    frontLeftFollower = new VictorSPX(2);
+    backLeftFollower = new VictorSPX(3);
+
+    backLeftFollower.follow(frontLeftFollower);
+
+    rightLeader = new CANSparkMax(4, MotorType.kBrushed);
+    frontRightFollower = new VictorSPX(5);
+    backRightFollower = new VictorSPX(6);
+
+    backRightFollower.follow(frontRightFollower);
+
+    controller = new XboxController(0);
   }
 
   @Override
@@ -46,7 +61,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    
+    leftLeader.set(-controller.getLeftY());
+    frontLeftFollower.set(ControlMode.PercentOutput, -leftLeader.getAppliedOutput());
+
+    rightLeader.set(-controller.getRightY());
+    frontRightFollower.set(ControlMode.PercentOutput, rightLeader.getAppliedOutput());
   }
 
   @Override

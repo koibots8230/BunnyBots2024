@@ -69,6 +69,8 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'com.github.shueja:Monologue:1.0.0' //added manually
 }
 
 test {
@@ -99,3 +101,7 @@ wpi.java.configureTestTasks(test)
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
+
+repositories {
+  maven { url 'https://jitpack.io' }
+} //added manually, hopefully this doesn't break the world.
