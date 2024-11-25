@@ -55,11 +55,9 @@ public class shooter extends SubsystemBase {
         shooterSetpointR = velocityR;
     }
 
-    public Command setVelocityCommand(double velocityL, double velocityR){
-
-        return Commands.runOnce(() -> this.setVelocity(velocityL, velocityR));        
+    public Command shootCommand(){
+        return Commands.runOnce(
+            () -> this.setVelocity(.2, .2), this
+        );
     }
-
-
-
 }
