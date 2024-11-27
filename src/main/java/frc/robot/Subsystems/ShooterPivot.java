@@ -1,4 +1,4 @@
-package frc.robot.Subsystems;
+package frc.robot.subsystems;
 
 import frc.robot.Constants;
 
@@ -27,7 +27,7 @@ public class ShooterPivot extends TrapezoidProfileSubsystem {
     private double pivotVoltage;
     //TODO: add logging!!!!!!!!!
 
-    public ShooterPivot(){
+    public ShooterPivot() {
         super(new TrapezoidProfile.Constraints(Constants.PivotConstants.MAX_VELOCITY, 0));
         pivotMotor = new CANSparkMax(Constants.PivotConstants.PIVOT_MOTOR, MotorType.kBrushless);
         pivotEncoder = pivotMotor.getAbsoluteEncoder();
@@ -41,19 +41,18 @@ public class ShooterPivot extends TrapezoidProfileSubsystem {
     }
 
     @Override
-    public void useState(State state){
+    public void useState(State state) {
         pivotVelocity = pivotEncoder.getVelocity();
         pivotVoltage = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
 
         pivotPID.setReference(state.position, ControlType.kPosition, 0, pivotFF.calculate(state.position, state.velocity));
     }   
 
-    private void movePivot(double position){
+    private void movePivot(double position) {
         this.setGoal(new State(position, 0));
     }
 
     public Command movePivotCommand(double position){
         return Commands.runOnce(() -> this.movePivot(position), this);
-        //:)
     }
 }
