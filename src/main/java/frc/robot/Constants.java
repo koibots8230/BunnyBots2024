@@ -30,8 +30,8 @@ public class Constants {
         public static final Measure<Velocity<Angle>> INTAKE_SPEED = RPM.of(1500);
         public static final Measure<Velocity<Angle>> SHOOT_SPEED = RPM.of(1500);
 
-        public static final double PID_kP = 0;
-        public static final double PID_kV = 0;
+        public static final double PID_kP = 0.00007;
+        public static final double PID_kV = 0.000172;
 
         public static final int TOP_ID = 9;
         public static final int BOTTOM_ID = 8;
