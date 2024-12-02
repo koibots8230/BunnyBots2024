@@ -1,6 +1,7 @@
-package frc.robot.subsystems;
+package frc.robot.Subsystems;
 
 import frc.robot.Constants;
+import monologue.Annotations.Log;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -23,8 +24,8 @@ public class ShooterPivot extends TrapezoidProfileSubsystem {
     private final SparkPIDController pivotPID;
     private final ArmFeedforward pivotFF;
 
-    private double pivotVelocity;
-    private double pivotVoltage;
+    @Log private double pivotVelocity;
+    @Log private double pivotVoltage;
     //TODO: add logging!!!!!!!!!
 
     public ShooterPivot() {

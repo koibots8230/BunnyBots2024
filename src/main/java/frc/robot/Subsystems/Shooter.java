@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -36,8 +36,8 @@ public class Shooter extends SubsystemBase implements Logged {
         topMotor.setSmartCurrentLimit(60);
         bottomMotor.setSmartCurrentLimit(60);
         topPidController = topMotor.getPIDController();
-        // topPidController.setP(ShooterConstants.PID_kP);
-        // topPidController.setFF(ShooterConstants.PID_kV);
+        topPidController.setP(ShooterConstants.PID_kP);
+        topPidController.setFF(ShooterConstants.PID_kV);
 
         bottomPidController = bottomMotor.getPIDController();
         bottomPidController.setP(ShooterConstants.PID_kP);
@@ -55,7 +55,7 @@ public class Shooter extends SubsystemBase implements Logged {
         topCurrent = topMotor.getOutputCurrent();
         bottomCurrent = bottomMotor.getOutputCurrent();
         topVoltage = topMotor.getBusVoltage() * topMotor.getAppliedOutput();
-        bottomVoltage = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();    
+        bottomVoltage = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();     
     }
 
     private void setVelocity(double velocityBottom, double velocityTop){
