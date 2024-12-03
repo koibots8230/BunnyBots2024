@@ -47,6 +47,11 @@ public class Constants {
         public static final double FF_kv = 0.01;
         public static final double MAX_VELOCITY = Math.PI/2.0;
         public static final double MAX_ACCELERATION = Math.PI;
+        public static final double TEMP_PIVOT_INTAKE = 0; //change later
+    }
+
+    public class ContrrollerConstants{
+      public static final double TRIGGER_SENSITIVITY = 0.15;
     }
     
 }

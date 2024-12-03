@@ -1,4 +1,4 @@
-package frc.robot.Subsystems;
+package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -58,7 +58,7 @@ public class Shooter extends SubsystemBase implements Logged {
         bottomVoltage = bottomMotor.getBusVoltage() * bottomMotor.getAppliedOutput();     
     }
 
-    private void setVelocity(double velocityBottom, double velocityTop){
+    private void setVelocity(double velocityBottom, double velocityTop) {
         setpointBottom = velocityBottom;
         setpointTop = velocityTop;
 
@@ -66,9 +66,14 @@ public class Shooter extends SubsystemBase implements Logged {
         bottomPidController.setReference(velocityBottom, ControlType.kVelocity);
     }
 
-    public Command shootCommand(double velocityTop, double velocityBottom){
+    public Command shootCommand(double velocityTop, double velocityBottom) {
         return Commands.runOnce(
             () -> this.setVelocity(velocityBottom, velocityTop), this
         );
+    }
+
+    public Command intakeCommand(double velocityBottom, double velocityTop) {
+        return Commands.runOnce(
+            () -> this.setVelocity(velocityBottom, velocityTop), this);
     }
 }
