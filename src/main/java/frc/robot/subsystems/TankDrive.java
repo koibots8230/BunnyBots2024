@@ -3,6 +3,7 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -60,9 +61,6 @@ public class TankDrive extends SubsystemBase implements Logged {
         followFrontRight = new VictorSP(DriveConstants.FRONT_RIGHT_ID);
         followBackRight = new VictorSP(DriveConstants.BACK_RIGHT_ID);
 
-        followBackLeft.addFollower(followFrontLeft);
-        followBackRight.addFollower(followFrontRight);
-
         leftEncoder = leadLeft.getAlternateEncoder(8192);
         rightEncoder = leadRight.getAlternateEncoder(8192);
 
@@ -79,6 +77,15 @@ public class TankDrive extends SubsystemBase implements Logged {
         leftPID.setFF(DriveConstants.kV);
         rightPID.setP(DriveConstants.kP);
         rightPID.setFF(DriveConstants.kV);
+
+        SmartDashboard.putBoolean("DriveTest/run", false);
+        SmartDashboard.putNumber("DriveTest/speed", 0.0);
+        SmartDashboard.putBoolean("DriveTest/leadLeft", false);
+        SmartDashboard.putBoolean("DriveTest/followFrontLeft", false);
+        SmartDashboard.putBoolean("DriveTest/followBackLeft", false);
+        SmartDashboard.putBoolean("DriveTest/leadRight", false);
+        SmartDashboard.putBoolean("DriveTest/followFrontRight", false);
+        SmartDashboard.putBoolean("DriveTest/followBackRight", false);
     }
     
     @Override
@@ -91,7 +98,13 @@ public class TankDrive extends SubsystemBase implements Logged {
         leadRightCurrent = leadRight.getOutputCurrent();
 
         followFrontLeft.setVoltage(leftVoltage);
+        followBackLeft.setVoltage(leftVoltage);
         followFrontRight.setVoltage(rightVoltage);
+        followBackRight.setVoltage(rightVoltage);
+
+        SmartDashboard.putNumber("DriveTest/speed",
+                Math.max(-1.0, Math.min(1.0, SmartDashboard.getNumber("DriveTest/speed", 0.0)))
+        );
     }
 
     @Override
@@ -113,5 +126,47 @@ public class TankDrive extends SubsystemBase implements Logged {
             this);
     }
 
+    public void testMotorDirectionPeriodic() {
+        double speed = 0.0;
+        if (SmartDashboard.getBoolean("DriveTest/run", false)) {
+            speed = Math.max(-1.0, Math.min(1.0, SmartDashboard.getNumber("DriveTest/speed", 0.0)));
+            System.out.println("speed = " + speed);
+        }
+        rightSetpoint = speed;
+        leftSetpoint = speed;
 
+        leadLeft.set(SmartDashboard.getBoolean(
+                "DriveTest/leadLeft", false) ? speed : 0.0);
+        followFrontLeft.set(SmartDashboard.getBoolean(
+                "DriveTest/followFrontLeft", false) ? speed : 0.0);
+        followBackLeft.set(SmartDashboard.getBoolean(
+                "DriveTest/followBackLeft", false) ? speed : 0.0);
+        leadRight.set(SmartDashboard.getBoolean(
+                "DriveTest/leadRight", false) ? speed : 0.0);
+        followFrontRight.set(SmartDashboard.getBoolean(
+                "DriveTest/followFrontRight", false) ? speed : 0.0);
+        followBackRight.set(SmartDashboard.getBoolean(
+                "DriveTest/followBackRight", false) ? speed : 0.0);
+    }
+
+    public void stop() {
+        leadLeft.set(0);
+        followFrontLeft.set(0);
+        followBackLeft.set(0);
+
+        leadRight.set(0);
+        followFrontRight.set(0);
+        followBackRight.set(0);
+
+        rightSetpoint = 0.0;
+        leftSetpoint = 0.0;
+
+        SmartDashboard.putBoolean("DriveTest/run", false);
+        SmartDashboard.putBoolean("DriveTest/leadLeft", false);
+        SmartDashboard.putBoolean("DriveTest/followFrontLeft", false);
+        SmartDashboard.putBoolean("DriveTest/followBackLeft", false);
+        SmartDashboard.putBoolean("DriveTest/leadRight", false);
+        SmartDashboard.putBoolean("DriveTest/followFrontRight", false);
+        SmartDashboard.putBoolean("DriveTest/followBackRight", false);
+    }
 }

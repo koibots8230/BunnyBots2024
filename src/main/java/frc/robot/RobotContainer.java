@@ -12,15 +12,18 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Subsystems.Shooter;
+import frc.robot.Subsystems.TankDrive;
 import monologue.Logged;
 import monologue.Monologue;
 
 public class RobotContainer implements Logged {
     private final XboxController controller;
     private final Shooter shooter;
+    public final TankDrive tankdrive;
   public RobotContainer() {
     controller = new XboxController(0);
     shooter = new Shooter();
+    tankdrive = new TankDrive();
 
     configureBindings();
 
