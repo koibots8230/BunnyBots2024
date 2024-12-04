@@ -66,11 +66,16 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.tankdrive.stop();
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_robotContainer.tankdrive.testMotorDirectionPeriodic();
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+    m_robotContainer.tankdrive.stop();
+  }
 }
