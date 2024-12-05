@@ -12,10 +12,12 @@ import monologue.Annotations.Log;
 
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class TankDrive extends SubsystemBase implements Logged {
@@ -27,7 +29,7 @@ public class TankDrive extends SubsystemBase implements Logged {
     private final VictorSP followFrontRight;
     private final VictorSP followBackRight;
     
-    private final RelativeEncoder leftEncoder;
+    private final AbsoluteEncoder leftEncoder;
     private final RelativeEncoder rightEncoder;
     
     private final SparkPIDController leftPID;
@@ -52,6 +54,9 @@ public class TankDrive extends SubsystemBase implements Logged {
         leadLeft = new CANSparkMax(DriveConstants.LEAD_LEFT_ID, MotorType.kBrushed);
         leadRight = new CANSparkMax(DriveConstants.LEAD_RIGHT_ID, MotorType.kBrushed); 
 
+        leadLeft.setIdleMode(IdleMode.kBrake);
+        leadRight.setIdleMode(IdleMode.kBrake);
+
         leadLeft.setSmartCurrentLimit(DriveConstants.CURRENT_LIMIT);
         leadRight.setSmartCurrentLimit(DriveConstants.CURRENT_LIMIT);
 
@@ -63,11 +68,11 @@ public class TankDrive extends SubsystemBase implements Logged {
         followBackLeft.addFollower(followFrontLeft);
         followBackRight.addFollower(followFrontRight);
 
-        leftEncoder = leadLeft.getAlternateEncoder(8192);
+        leftEncoder = leadLeft.getAbsoluteEncoder();
         rightEncoder = leadRight.getAlternateEncoder(8192);
 
-        leftEncoder.setVelocityConversionFactor(DriveConstants.WHEEL_RADIUS.in(Meters));
-        rightEncoder.setVelocityConversionFactor(DriveConstants.WHEEL_RADIUS.in(Meters));
+        leftEncoder.setVelocityConversionFactor((DriveConstants.WHEEL_RADIUS.in(Meters)*2*Math.PI)/60.0);
+        rightEncoder.setVelocityConversionFactor(-(DriveConstants.WHEEL_RADIUS.in(Meters)*2*Math.PI)/60.0);
 
         leftPID = leadLeft.getPIDController();
         rightPID = leadRight.getPIDController();
@@ -83,15 +88,15 @@ public class TankDrive extends SubsystemBase implements Logged {
     
     @Override
     public void periodic() {
-        leftVelocity = leftEncoder.getVelocity();
+        leftVelocity = leftEncoder.getVelocity() * 60;
         rightVelocity = rightEncoder.getVelocity();
         leftVoltage = leadLeft.getAppliedOutput() * leadLeft.getBusVoltage();
         rightVoltage = leadRight.getAppliedOutput() * leadRight.getBusVoltage();
         leadLeftCurrent = leadLeft.getOutputCurrent();
         leadRightCurrent = leadRight.getOutputCurrent();
 
-        followFrontLeft.setVoltage(leftVoltage);
-        followFrontRight.setVoltage(rightVoltage);
+        followFrontLeft.setVoltage(-leftVoltage);
+        followFrontRight.setVoltage(-rightVoltage);
     }
 
     @Override
@@ -101,8 +106,8 @@ public class TankDrive extends SubsystemBase implements Logged {
     }
 
     private void tankDrive(double left, double right) {
-        leftPID.setReference(left * DriveConstants.MAX_SPEED.in(MetersPerSecond), ControlType.kVelocity);
-        rightPID.setReference(right * DriveConstants.MAX_SPEED.in(MetersPerSecond), ControlType.kVelocity);
+        leftPID.setReference(-left * DriveConstants.MAX_SPEED.in(MetersPerSecond), ControlType.kVelocity);
+        rightPID.setReference(-right * DriveConstants.MAX_SPEED.in(MetersPerSecond), ControlType.kVelocity);
         leftSetpoint = left * DriveConstants.MAX_SPEED.in(MetersPerSecond);
         rightSetpoint = left * DriveConstants.MAX_SPEED.in(MetersPerSecond);
     }

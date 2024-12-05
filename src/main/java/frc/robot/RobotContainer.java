@@ -12,15 +12,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterPivot;
+import frc.robot.subsystems.TankDrive;
 import monologue.Logged;
 import monologue.Monologue;
 
 public class RobotContainer implements Logged {
     private final XboxController controller;
     private final Shooter shooter;
+    private final ShooterPivot pivot;
+    private final TankDrive drive;
   public RobotContainer() {
     controller = new XboxController(0);
     shooter = new Shooter();
+    pivot = new ShooterPivot();
+    drive = new TankDrive();
 
     configureBindings();
 
@@ -28,9 +34,10 @@ public class RobotContainer implements Logged {
   }
 
   private void configureBindings() {
-    Trigger shootTest = new Trigger(controller::getXButton);
-    shootTest.onTrue(shooter.shootCommand(ShooterConstants.INTAKE_SPEED.in(RPM), ShooterConstants.INTAKE_SPEED.in(RPM)));
-    shootTest.onFalse(shooter.shootCommand(0, 0));
+    // Trigger shootTest = new Trigger(controller::getXButton);
+    // shootTest.onTrue(pivot.movePivotCommand(Math.PI / 6.0));
+
+    drive.setDefaultCommand(drive.driveCommand(controller::getLeftY, controller::getRightY));
   }
 
   public Command getAutonomousCommand() {

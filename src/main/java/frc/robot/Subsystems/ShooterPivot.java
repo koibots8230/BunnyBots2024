@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -15,36 +17,41 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 
-public class ShooterPivot extends TrapezoidProfileSubsystem {
+public class ShooterPivot extends TrapezoidProfileSubsystem implements Logged {
     //need to put @Log in!
 
     private final CANSparkMax pivotMotor;
     private final AbsoluteEncoder pivotEncoder;
     private final SparkPIDController pivotPID;
     private final ArmFeedforward pivotFF;
-
-    private double pivotVelocity;
-    private double pivotVoltage;
+    
+    
+    @Log private double position;
+    @Log private double pivotVelocity;
+    @Log private double pivotVoltage;
     //TODO: add logging!!!!!!!!!
 
     public ShooterPivot() {
         super(new TrapezoidProfile.Constraints(Constants.PivotConstants.MAX_VELOCITY, 0));
         pivotMotor = new CANSparkMax(Constants.PivotConstants.PIVOT_MOTOR, MotorType.kBrushless);
+        pivotMotor.setInverted(true);
         pivotEncoder = pivotMotor.getAbsoluteEncoder();
         pivotPID = pivotMotor.getPIDController();
         pivotFF = new ArmFeedforward(Constants.PivotConstants.FF_ks, Constants.PivotConstants.FF_kg, Constants.PivotConstants.FF_kv);
 
         pivotEncoder.setVelocityConversionFactor(Constants.PivotConstants.Conversion);
-        //TODO: conversion needs to be a whole thing. probably an equation passed into this^^^
+        //TODO: conversion needs to be a whole thing. probably an equation passed into this
         pivotPID.setFeedbackDevice(pivotEncoder);
         pivotPID.setP(Constants.PivotConstants.PID_kP);
+        pivotEncoder.setPositionConversionFactor(Constants.PivotConstants.Conversion);
     }
 
     @Override
     public void useState(State state) {
         pivotVelocity = pivotEncoder.getVelocity();
         pivotVoltage = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
-
+        position = pivotEncoder.getPosition();
+        //:)
         pivotPID.setReference(state.position, ControlType.kPosition, 0, pivotFF.calculate(state.position, state.velocity));
     }   
 
