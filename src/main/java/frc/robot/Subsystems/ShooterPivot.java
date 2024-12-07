@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Constants.PivotConstants;
 import monologue.Logged;
 import monologue.Annotations.Log;
 
@@ -32,7 +33,7 @@ public class ShooterPivot extends TrapezoidProfileSubsystem implements Logged {
     //TODO: add logging!!!!!!!!!
 
     public ShooterPivot() {
-        super(new TrapezoidProfile.Constraints(Constants.PivotConstants.MAX_VELOCITY, 0));
+        super(new TrapezoidProfile.Constraints(Constants.PivotConstants.MAX_VELOCITY, PivotConstants.MAX_ACCELERATION));
         pivotMotor = new CANSparkMax(Constants.PivotConstants.PIVOT_MOTOR, MotorType.kBrushless);
         pivotMotor.setInverted(true);
         pivotEncoder = pivotMotor.getAbsoluteEncoder();
@@ -43,14 +44,20 @@ public class ShooterPivot extends TrapezoidProfileSubsystem implements Logged {
         //TODO: conversion needs to be a whole thing. probably an equation passed into this
         pivotPID.setFeedbackDevice(pivotEncoder);
         pivotPID.setP(Constants.PivotConstants.PID_kP);
+
+        pivotPID.setPositionPIDWrappingEnabled(true);
+        pivotPID.setPositionPIDWrappingMaxInput(Math.PI * (3.0/2.0));
+        pivotPID.setPositionPIDWrappingMinInput(0);
         pivotEncoder.setPositionConversionFactor(Constants.PivotConstants.Conversion);
     }
 
     @Override
     public void useState(State state) {
         pivotVelocity = pivotEncoder.getVelocity();
-        pivotVoltage = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
+        pivotVoltage = pivotFF.calculate(state.position, state.velocity);
         position = pivotEncoder.getPosition();
+
+        //System.out.println(state.position);
         //:)
         pivotPID.setReference(state.position, ControlType.kPosition, 0, pivotFF.calculate(state.position, state.velocity));
     }   

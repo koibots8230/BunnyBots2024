@@ -54,6 +54,7 @@ public class TankDrive extends SubsystemBase implements Logged {
         leadLeft = new CANSparkMax(DriveConstants.LEAD_LEFT_ID, MotorType.kBrushed);
         leadRight = new CANSparkMax(DriveConstants.LEAD_RIGHT_ID, MotorType.kBrushed); 
 
+        leadRight.setInverted(true);
         leadLeft.setIdleMode(IdleMode.kBrake);
         leadRight.setIdleMode(IdleMode.kBrake);
 
@@ -65,14 +66,14 @@ public class TankDrive extends SubsystemBase implements Logged {
         followFrontRight = new VictorSP(DriveConstants.FRONT_RIGHT_ID);
         followBackRight = new VictorSP(DriveConstants.BACK_RIGHT_ID);
 
-        followBackLeft.addFollower(followFrontLeft);
-        followBackRight.addFollower(followFrontRight);
+        // followBackLeft.addFollower(followFrontLeft);
+        // followBackRight.addFollower(followFrontRight);
 
         leftEncoder = leadLeft.getAbsoluteEncoder();
         rightEncoder = leadRight.getAlternateEncoder(8192);
 
-        leftEncoder.setVelocityConversionFactor((DriveConstants.WHEEL_RADIUS.in(Meters)*2*Math.PI)/60.0);
-        rightEncoder.setVelocityConversionFactor(-(DriveConstants.WHEEL_RADIUS.in(Meters)*2*Math.PI)/60.0);
+        leftEncoder.setVelocityConversionFactor((DriveConstants.WHEEL_RADIUS.in(Meters) * 2 * Math.PI));
+        //rightEncoder.setVelocityConversionFactor(-(DriveConstants.WHEEL_RADIUS.in(Meters) * 2 * Math.PI) / 60.0);
 
         leftPID = leadLeft.getPIDController();
         rightPID = leadRight.getPIDController();
@@ -88,7 +89,7 @@ public class TankDrive extends SubsystemBase implements Logged {
     
     @Override
     public void periodic() {
-        leftVelocity = leftEncoder.getVelocity() * 60;
+        leftVelocity = leftEncoder.getVelocity();
         rightVelocity = rightEncoder.getVelocity();
         leftVoltage = leadLeft.getAppliedOutput() * leadLeft.getBusVoltage();
         rightVoltage = leadRight.getAppliedOutput() * leadRight.getBusVoltage();
@@ -96,7 +97,7 @@ public class TankDrive extends SubsystemBase implements Logged {
         leadRightCurrent = leadRight.getOutputCurrent();
 
         followFrontLeft.setVoltage(-leftVoltage);
-        followFrontRight.setVoltage(-rightVoltage);
+        followFrontRight.setVoltage(rightVoltage);
     }
 
     @Override
@@ -114,7 +115,7 @@ public class TankDrive extends SubsystemBase implements Logged {
     
     public Command driveCommand(DoubleSupplier joysstickLeft, DoubleSupplier joystickRight) {
         return Commands.run(
-            () -> this.tankDrive(joysstickLeft.getAsDouble(), joystickRight.getAsDouble()),
+            () -> this.tankDrive(joysstickLeft.getAsDouble() * joysstickLeft.getAsDouble() * Math.signum(joysstickLeft.getAsDouble()), joystickRight.getAsDouble() * joystickRight.getAsDouble() * Math.signum(joystickRight.getAsDouble())),
             this);
     }
 

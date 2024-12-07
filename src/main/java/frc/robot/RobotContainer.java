@@ -34,8 +34,19 @@ public class RobotContainer implements Logged {
   }
 
   private void configureBindings() {
-    // Trigger shootTest = new Trigger(controller::getXButton);
-    // shootTest.onTrue(pivot.movePivotCommand(Math.PI / 6.0));
+    Trigger intakeTrigger = new Trigger(() -> controller.getLeftTriggerAxis() > 0.1);
+    intakeTrigger.onTrue(shooter.shootCommand(-1000,- 1000));
+    intakeTrigger.onFalse(shooter.shootCommand(0, 0));
+
+    Trigger shootTrigger = new Trigger(() -> controller.getRightTriggerAxis() > 0.1);
+    shootTrigger.onTrue(shooter.shootCommand(1000, 1000));
+    shootTrigger.onFalse(shooter.shootCommand(0, 0));
+
+    Trigger shootPosition = new Trigger(controller::getRightBumper);
+    shootPosition.onTrue(pivot.movePivotCommand(Math.PI-0.5));
+
+    Trigger intakePosition = new Trigger(controller::getLeftBumper);
+    intakePosition.onTrue(pivot.movePivotCommand(0.05));
 
     drive.setDefaultCommand(drive.driveCommand(controller::getLeftY, controller::getRightY));
   }

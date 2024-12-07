@@ -39,13 +39,13 @@ public class Constants {
   
     public class PivotConstants{ //TODO: put in actual Constants values
         public static final int PIVOT_MOTOR = 7;
-        public static final double Conversion = (1.0/3.0) * 2 * Math.PI;
-        public static final double PID_kP = 0.0;
+        public static final double Conversion = (3.0/4.0) * 2 * Math.PI;
+        public static final double PID_kP = 2;
         public static final double FF_ks = 0.0;
         public static final double FF_kg = 0.3;
-        public static final double FF_kv = 3;
-        public static final double MAX_VELOCITY = Math.PI/2.0;
-        public static final double MAX_ACCELERATION = Math.PI;
+        public static final double FF_kv = 2.32;
+        public static final double MAX_VELOCITY = Math.PI * 3;
+        public static final double MAX_ACCELERATION = Math.PI * 4;
     }
     
 }

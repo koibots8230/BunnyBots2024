@@ -36,8 +36,8 @@ public class Shooter extends SubsystemBase implements Logged {
         topMotor.setSmartCurrentLimit(60);
         bottomMotor.setSmartCurrentLimit(60);
         topPidController = topMotor.getPIDController();
-        // topPidController.setP(ShooterConstants.PID_kP);
-        // topPidController.setFF(ShooterConstants.PID_kV);
+        topPidController.setP(ShooterConstants.PID_kP);
+        topPidController.setFF(ShooterConstants.PID_kV);
 
         bottomPidController = bottomMotor.getPIDController();
         bottomPidController.setP(ShooterConstants.PID_kP);
@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase implements Logged {
         setpointBottom = velocityBottom;
         setpointTop = velocityTop;
 
-        //topPidController.setReference(velocityTop, ControlType.kVelocity);
+        topPidController.setReference(velocityTop, ControlType.kVelocity);
         bottomPidController.setReference(velocityBottom, ControlType.kVelocity);
     }
 
